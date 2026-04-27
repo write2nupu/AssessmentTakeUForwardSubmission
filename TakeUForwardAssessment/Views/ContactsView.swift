@@ -13,24 +13,37 @@ struct ContactsView: View {
     @State private var path = NavigationPath()
     @EnvironmentObject var store: ChatStore
     
-        var filteredContacts: [Contact] {
-            searchText.isEmpty
-            ? store.contacts
-            : store.contacts.filter {
-                $0.name.localizedCaseInsensitiveContains(searchText)
-            }
+    var filteredContacts: [Contact] {
+        searchText.isEmpty
+        ? store.contacts
+        : store.contacts.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText)
         }
+    }
     
     var body: some View {
-
+        
+        ZStack {
+            
+            LinearGradient(
+                colors: [
+                    Color.green.opacity(0.15),
+                    Color.blue.opacity(0.08),
+                    Color.white
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
             NavigationStack (path: $path) {
-
+                
                 List(filteredContacts) { contact in
                     
                     NavigationLink(value: contact) {
-
+                        
                         HStack(spacing:14) {
-
+                            
                             Circle()
                                 .fill(.gray.opacity(0.2))
                                 .frame(width:50,height:50)
@@ -39,11 +52,11 @@ struct ContactsView: View {
                                         .font(.title2)
                                         .foregroundStyle(.gray)
                                 )
-
+                            
                             VStack(alignment:.leading) {
                                 Text(contact.name)
                                     .font(.headline)
-
+                                
                                 Text(contact.status)
                                     .foregroundStyle(.secondary)
                             }
@@ -51,10 +64,11 @@ struct ContactsView: View {
                     }
                 }
                 
+                
                 .safeAreaInset(edge: .bottom) {
                     HStack {
                         Spacer()
-
+                        
                         FloatingButton(icon:"message.fill") {
                         }
                         .padding()
@@ -66,7 +80,7 @@ struct ContactsView: View {
                     text: $searchText,
                     prompt: "Search contacts"
                 )
-
+                
                 .navigationDestination(for: Contact.self) { contact in
                     ChatsView(
                         contact: contact
@@ -74,8 +88,5 @@ struct ContactsView: View {
                 }
             }
         }
-}
-
-#Preview {
-    ContactsView()
+    }
 }
