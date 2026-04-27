@@ -11,7 +11,7 @@ import SwiftUI
 struct TakeUForwardAssessmentApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContactsView()
         }
     }
 }
