@@ -6,20 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ChatsView: View {
-
-    @State private var newMessage = ""
-    @State var messages: [Message]
-
-    init(contact: Contact) {
-        self.contact = contact
-        _messages = State(
-            initialValue: contact.messages
-        )
-    }
     
+    @State private var newMessage = ""
     let contact: Contact
+    @EnvironmentObject var store: ChatStore
+    var contactIndex: Int {
+        store.contacts.firstIndex {
+            $0.id == contact.id
+        }!
+    }
 
     var body: some View {
 
@@ -50,7 +48,7 @@ struct ChatsView: View {
 
             ScrollView {
                 LazyVStack(spacing:12) {
-                    ForEach(messages) { message in
+                    ForEach(store.contacts[contactIndex].messages) { message in
                         HStack {
 
                             if message.isMe {
@@ -93,22 +91,26 @@ struct ChatsView: View {
 
                 Button {
 
-                    guard !newMessage.trimmingCharacters(
+                    let text = newMessage.trimmingCharacters(
                         in: .whitespacesAndNewlines
-                    ).isEmpty else { return }
-
-                    let newMsg = Message(
-                        text: newMessage,
-                        isMe: true
                     )
 
-                    messages.append(newMsg)
+                    guard !text.isEmpty else { return }
+
+                    store.contacts[contactIndex]
+                        .messages
+                        .append(
+                            Message(
+                               text: text,
+                               isMe: true
+                            )
+                        )
 
                     newMessage = ""
 
                 } label: {
 
-                    Image(systemName: "paperplane.fill")
+                    Image(systemName:"paperplane.fill")
                         .font(.title3)
                         .foregroundColor(.white)
                         .frame(width: 44, height: 44)

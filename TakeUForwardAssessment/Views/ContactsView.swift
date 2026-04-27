@@ -11,11 +11,12 @@ struct ContactsView: View {
     
     @State private var searchText = ""
     @State private var path = NavigationPath()
+    @EnvironmentObject var store: ChatStore
     
         var filteredContacts: [Contact] {
             searchText.isEmpty
-            ? contacts
-            : contacts.filter {
+            ? store.contacts
+            : store.contacts.filter {
                 $0.name.localizedCaseInsensitiveContains(searchText)
             }
         }
@@ -31,7 +32,13 @@ struct ContactsView: View {
                         HStack(spacing:14) {
 
                             Circle()
+                                .fill(.gray.opacity(0.2))
                                 .frame(width:50,height:50)
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.gray)
+                                )
 
                             VStack(alignment:.leading) {
                                 Text(contact.name)
@@ -55,6 +62,10 @@ struct ContactsView: View {
                 }
                 
                 .navigationTitle("Contacts")
+                .searchable(
+                    text: $searchText,
+                    prompt: "Search contacts"
+                )
 
                 .navigationDestination(for: Contact.self) { contact in
                     ChatsView(

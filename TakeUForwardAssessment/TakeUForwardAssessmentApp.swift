@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct TakeUForwardAssessmentApp: App {
+    @StateObject var store = ChatStore()
     var body: some Scene {
         WindowGroup {
             ContactsView()
+                .environmentObject(store)
         }
     }
 }
